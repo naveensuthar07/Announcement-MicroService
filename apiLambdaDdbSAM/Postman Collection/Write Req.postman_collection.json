@@ -1,0 +1,25 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Write Req",
+		"_postman_id": "4c0a5ddb-136e-3e04-7fb4-51cba9f9d77d",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Write",
+			"request": {
+				"url": "http://localhost:3000/writedb",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"title\":\"Fifth\",\n\"description\":\"Fifth Announcement\",\n\"date\":\"2021-04-15\"}\n\n"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

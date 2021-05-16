@@ -1,0 +1,25 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Read Req",
+		"_postman_id": "0add78b6-10ab-4113-d435-84ca291a1214",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Read",
+			"request": {
+				"url": "http://localhost:3000/readdb",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"title\":\"Fourth\",\n\"description\":\"Fourth Announcement\",\n\"date\":\"2021-04-15\"}\n\n"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
