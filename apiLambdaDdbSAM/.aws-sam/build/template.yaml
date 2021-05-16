@@ -1,6 +1,14 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Resources:
+  BasicAWSApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: Basic AWS Api Gateway
+      StageName: Prod
+    Variables:
+      ServerlessExpressLambdaFunctionName:
+        Ref: LambdaRead
   myDB:
     Type: AWS::Serverless::SimpleTable
     Properties:
@@ -22,6 +30,8 @@ Resources:
         apiForLambda:
           Type: Api
           Properties:
+            RestApiId:
+              Ref: BasicAWSApiGateway
             Path: /writedb
             Method: post
       Policies:
@@ -39,9 +49,16 @@ Resources:
         apiForLambda:
           Type: Api
           Properties:
+            RestApiId:
+              Ref: BasicAWSApiGateway
             Path: /readdb
             Method: post
       Policies:
         DynamoDBReadPolicy:
           TableName:
             Ref: myDB
+Outputs:
+  BasicAWSApiGateway:
+    Description: API Gateway endpoint URL for Prod stage
+    Value:
+      Fn::Sub: http://127.0.0.1/Prod/
