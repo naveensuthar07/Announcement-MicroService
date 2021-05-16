@@ -2,64 +2,49 @@ import json
 import boto3
 
 
-class Writeprocess(object):
-    def __init__(self,event):
-        self.dynamodb = None
-        self.event = event
-        self.tableCurrent = None
-        self.event = self.event["body"]
-        self.event = json.loads(self.event)
+print('Loading function')
 
-    def dbconnect(self):
-        print("Inside DB connection")
-        self.dynamodb = boto3.resource('dynamodb',
+
+def handler(event, context):
+    print("THis is Write Function")
+    event = event["body"]
+    event = json.loads(event)
+    print(event)
+	#Hosted Dynamo db on local
+    dynamodb = boto3.resource('dynamodb',
                            endpoint_url='http://192.168.0.149:8000',
                            region_name = 'dummy',
                            aws_secret_access_key = 'dummy',
                            aws_access_key_id = 'dummy')
-        print("Done Client Creation")
-        self.tableCurrent = self.dynamodb.Table('tabmine')
-    
-    def process(self):
-        print("Inside Processing")
-        #Fetch data from request
+
+    print("Done connection")
+    tableTemperature = dynamodb.Table('tabmine')
+    title = event['title']
+    description = event['description']
+    date = event['date']
+    try:
         
-        title = self.event['title']
-        description = self.event['description']
-        date = self.event['date']
-        try:
-            self.tableCurrent.put_item(
-            Item={
-                    'Title': title,
-                    'description': description,
-                    'date': date
-                }
-            )
-            
-            return {
-                'statusCode': 200,
-                'body': json.dumps('Succesfully inserted record for Announcement Title --> {}'.format(title))
+        tableTemperature.put_item(
+           Item={
+                'Title': title,
+                'description': description,
+                'date': date
             }
-        except Exception as error:
-            self.errorhandling(error)
-    def errorhandling(self,error):
+        )
+        
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Succesfully inserted record!')
+        }
+    except Exception as error:
         print('Closing lambda function')
         print(error)
         return {
                 'statusCode': 400,
-                'body': json.dumps('Error saving the record due to --> {}'.format(error))
-        }  
+                'body': json.dumps('Error saving the record')
+        }
 
 
-def handler(event, context):
-    print("This is Write Function")
-    #Connect DynamoDB
-    read = Writeprocess(event)
-    read.dbconnect()
-    response = read.process()
-    return response
 
-    
-
-
+    #print("Received event: " + json.dumps(event, indent=2))
     
