@@ -33,11 +33,9 @@ class Readprocess(object):
             print(scan)
             output = scan['Items']
             print(output)
-			#Scan full table
             for item in output:
                 self.outputMain.append(item)
                 print(item)
-			#If query string parameters are provided then it will return the specific result
             if self.pagination :
                 end = int(self.limit) * int(self.page)
                 start = end - int(self.limit)
@@ -45,16 +43,12 @@ class Readprocess(object):
                 print(start)
                 self.outputMain = self.outputMain[start:end]
                 if len(self.outputMain) == 0:
-                    response = {
-                    'statusCode': 404,
-                    'body': json.dumps('Requested page doesnt exist')
-                    } 
+                    return self.errorhandling("Requested page doesnt exist",404)
                 else:
                     response = {
                     'statusCode': 200,
                     'body': "Page-->{} & Limit-->{}".format(self.page,self.limit) + json.dumps(self.outputMain)
                     }
-			#Return full DB scan result
             else:
                 response = {
                     'statusCode': 200,
@@ -62,18 +56,20 @@ class Readprocess(object):
                     }            
             return response
         except Exception as error:
-            #Error Handing
-            print('Closing lambda function')
-            print(error)
-            return {
-                    'statusCode': 400,
-                    'body': json.dumps('Error fetching the record due to -->{}'.format(error))
-            }    
+            self.errorhandling(error)
+            
+    def errorhandling(self,error,statusCode = 400):
+        #Error Handing
+        print('Closing lambda function')
+        print(error)
+        return {
+                'statusCode': statusCode,
+                'body': json.dumps('Error fetching the record due to -->{}'.format(error))
+        } 
 def handler(event, context):
     print("This is Read Function")
+    #Connect DynamoDB
     read = Readprocess(event)
-	#Connect DynamoDB
     read.dbconnect()
-	#Do read processing from DynamoDB
     response = read.process()
     return response

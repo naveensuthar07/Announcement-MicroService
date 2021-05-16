@@ -23,10 +23,10 @@ class Writeprocess(object):
     def process(self):
         print("Inside Processing")
         #Fetch data from request
+        
         title = self.event['title']
         description = self.event['description']
         date = self.event['date']
-		
         try:
             self.tableCurrent.put_item(
             Item={
@@ -41,20 +41,21 @@ class Writeprocess(object):
                 'body': json.dumps('Succesfully inserted record for Announcement Title --> {}'.format(title))
             }
         except Exception as error:
-			#Error handling
-            print('Closing lambda function')
-            print(error)
-            return {
-                    'statusCode': 400,
-                    'body': json.dumps('Error saving the record due to --> {}'.format(error))
-            }      
+            self.errorhandling(error)
+    def errorhandling(self,error):
+        print('Closing lambda function')
+        print(error)
+        return {
+                'statusCode': 400,
+                'body': json.dumps('Error saving the record due to --> {}'.format(error))
+        }  
+
 
 def handler(event, context):
     print("This is Write Function")
+    #Connect DynamoDB
     read = Writeprocess(event)
-	#Connect DynamoDB
     read.dbconnect()
-	#Write Processing
     response = read.process()
     return response
 
